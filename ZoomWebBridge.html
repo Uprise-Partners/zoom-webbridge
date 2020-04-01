@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>ZOOM Web Meeting Connector</title>
+    <link rel="shortcut icon" type="image/png"
+        href="https://assets.website-files.com/5d8a6d4055352015484fc3b9/5d8a715998e378081a5e9fc2_Uprise%20Partners%20Logo%20Navy%20Favicon.png" />
+
+</head>
+
+<body>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#copy_button").click(function () {
+                $('.toast').toast('show');
+            });
+        });
+    </script>
+
+    <div class="container" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+        <div class="container pt-4 pb-4" style="border: 2px solid black; width: 440px">
+            <div class="row">
+                <div class="col">
+                    <img src="https://assets.website-files.com/5d8a6d4055352015484fc3b9/5d9cb57ea7370f86361d8125_Uprise%20Partners%20Wordmark%20Navy.svg"
+                        alt="Zoom">
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col">
+                    <p>ZOOM Web Meeting Connector</p>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <label for="roomid">Conference ID [required]:</label>
+                    <input class="form-control" type="text" id="roomid" name="roomid" placeholder="Conference ID"
+                        onfocusout="fix_meeting_link()">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <label for="pw">Password [optional]:</label>
+                    <input class="form-control" type="text" id="pw" name="pw" placeholder="Optional Password"
+                        onfocusout="fix_meeting_link()">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col"></div>
+                <div class="col">
+                    <span class="float-right">
+                        <form style="margin: 0px; padding: 0px; display: inline">
+                            <button class="btn btn-primary btn-block" style="width:200px" id="open_meeting">Join
+                                Meeting Now</button>
+                        </form>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col">
+                </div>
+                <div class="col">
+                    <span class="float-right">
+                            <button type="submit" class="btn btn-primary btn-block" style="width:200px"
+                                onclick="generate_link()" width="100%">Create Meeting Link</button>
+                    </span>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col">
+                    <span class="float-right">
+                            <button class="btn btn-primary btn-block" id="copy_button" style="width:200px"
+                                onclick="copy_to_clipboard()">Copy
+                                Link to Clipboard</button>
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p id="copied_label"></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                <a id="meetingLink" href=""></a>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        function create_meeting_link() {
+            // Make sure to remove spaces in the meeting id if they exist
+            var id = document.getElementById("roomid").value.replace(/\s/g, '');
+            var pw = document.getElementById("pw").value;
+            // Clear some page state when this happens
+            var copied_label = document.getElementById("copied_label")
+            copied_label.innerHTML = ""
+            return "https://zoom.us/wc/join/" + id + "?pwd=" + pw;
+        }
+
+        function fix_meeting_link() {
+            var meeting_link = create_meeting_link();
+            document.getElementById("open_meeting").setAttribute("formaction", meeting_link);
+            return false;
+        }
+
+        function generate_link() {
+            var new_link_text = create_meeting_link()
+            var link = document.getElementById("meetingLink");
+            link.innerHTML = new_link_text;
+            link.setAttribute('href', new_link_text);
+            return false;
+        }
+
+        function copy_to_clipboard() {
+            const el = document.createElement('textarea');
+            el.value = create_meeting_link();
+            el.setAttribute('readonly', '');
+            el.style.position = 'absolute';
+            el.style.left = '-9999px';
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            var link = document.getElementById("meetingLink");
+            link.innerHTML = el.value;
+            link.setAttribute('href', el.value);
+            var copied_label = document.getElementById("copied_label")
+            copied_label.innerHTML = "Link copied to clipboard:"
+            return false;
+        };
+    </script>
+</body>
+
+</html>
